@@ -1,0 +1,269 @@
+
+db.createUser( { user: "root", pwd: "mongo@123", roles: [ { role: "root", db: "admin" } ] });
+
+db.createUser({user:"developers",pwd:"gajeY5F",roles:["readWrite","dbAdmin","userAdmin"]});
+
+db.updateUser({user:"developers",pwd:"gajeY5F",roles:["readWrite","dbAdmin","userAdmin","restore"]});
+
+[sreenivas@lnxdbsrv01 dump]$ mongorestore -u restore -p gajeY5F --authenticationDatabase admin --db dialers_apidb_dev /home/sreenivas/dump/dialers_apidb/
+----------------------------
+MONGO DB INSTALLATION
+
+1) Create a /etc/yum.repos.d/mongodb-org-3.4.repo file so that you can install MongoDB directly, using yum. 
+
+2)Add following in mongodb-org-3.4.repo file 
+
+ [mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+
+3) For versions of MongoDB earlier than 3.0
+
+[mongodb-org-2.6]
+name=MongoDB 2.6 Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+
+4) yum install -y mongodb-org 
+
+5) service mongod start
+
+refer url: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/
+
+While installing mongo following RPM will installed
+ mongodb-org-mongos           x86_64           3.4.2-1.el6             mongodb-org-3.4            12 M
+ mongodb-org-server           x86_64           3.4.2-1.el6             mongodb-org-3.4            20 M
+ mongodb-org-shell            x86_64           3.4.2-1.el6             mongodb-org-3.4            11 M
+ mongodb-org-tools            x86_64           3.4.2-1.el6             mongodb-org-3.4            49 M
+
+------------------------------------------------------------------------------------------------------------------------
+
+1)db.createUser(
+   {
+       user: "kkr", 
+       pwd: "123", 
+       roles:["readWrite","dbAdmin","userAdmin"]
+   })
+   
+   db.auth("root", "tuduwufUp7udruVu")
+
+db.createUser({user:"karthik",pwd:"123",roles:["readWrite"]})
+
+2)mongo --port 27017 -u "root" -p "tuduwufUp7udruVu" --authenticationDatabase "admin"
+
+3)show dbs (it will display all DB's in the Mongo database)
+
+4) use dbname (ex: use ApplePush, Means we will connect to particular DB)
+
+5) show collections (it will dislpay all collections, means tables )
+
+6) db.collectionname.find() (it will display all records on particular collections) 
+            
+   and 
+   
+   db.users.findOne() (It will display only one record)
+ 
+
+7) db.collectionname.find().limit(number) (Based on limit number it will display the records)
+
+8)  db.Token_Details.find().pretty()  (It will display all record in proper readble format.)
+
+Note: By default it will display few records. if you type 'it' will show more. 
+
+9) How to take Mongo backup
+
+# mongodump --port 27017 -u "root" 
+password:
+
+Note: Now it will create one directory Named as dump on current working directory
+
+[OR]
+
+If you didn't create any user for Mongo login authentication use below command for backup
+
+#mongodump
+
+Note: Now it will create one directory Named as dump on current working directory
+
+[OR]
+
+To specify a different output directory, you can use the --out or -o option:
+
+# mongodump --out /data/backup/
+
+10) Particular DB Backup
+
+# mongodump --db databasname  (EX: # mongodump --db ApplePush)
+
+11) To limit the amount of data included in the database dump,you can specify --db and --collection as options to mongo dump. For example:
+
+# mongodump --collection myCollection --db test
+
+EX: mongodump --collection Token_Details --db ApplePush
+
+12) To restore the Database
+
+# mongorestore --port 27017 dump/
+
+13)To see current we are on working on which DB use below query
+
+db or db.getName()
+
+14) To create a collection use below query
+ 
+db.createCollection("mydocument")
+
+15) To create a collection and providing some options.
+
+db.createCollection("mycol", { capped : true, autoIndexId : true, size : 1024, max : 100 } )
+
+Note: we can't modifiy existing documents in capped collection.
+You can't delete documents from a capped collection. To remove all documents from a collection, use the drop() method to drop the collection
+and recreate the capped collection.
+       
+16) create a collection, columns and inserting records
+
+db.openarka.insert({"name" : "Karthik"})
+
+Example for multiple document insertion
+db.limit.insert([{"Name":"Karthik K ",Age:31,City:"Tirupathi"} ,{"Name":"chaitu ",Age:31,City:"Tirupathi"},{"Name":"Ranjith",Age:29,City:"Tirupathi"},{"Name":"Prasad",Age:42,City:"Tirupathi"},{"Name":"Mahesh",Age:24,City:"Tirupathi"}])
+
+17) To drop a collection
+
+db.collection.drop()
+
+18) To drop DataBase
+
+db.dropDatabase()
+----------------------------------------------------------------------------------------------------------
+19)
+
+RDBMS	        MongoDB
+Database		Database
+Table	        Collection
+Tuple/Row		Document
+column	        Field
+Table Join		Embedded Documents
+Primary Key		Primary Key (Default key _id provided by mongodb itself)
+-----------------------------------------------------------------------------------------------------------
+20) To update the existing document.Use below query
+
+db.users.update({'Name': 'Karthik'},{$set:{'Name': 'Karthik Reddy'}})
+
+21)To update multiple documents (By default mongodb will update only single document, to update multiple you need to set a paramter 'multi' to true.)
+
+db.users.update({'Name': 'Karthik Reddy'},{$set:{'Name': 'Karthik Reddy K'}},{multi:true})
+
+22)Save Method (The save() method replaces the existing document with the new document passed in save() method )
+
+db.users.save({"_id" : ObjectId("58c27ff0879efcb7becab38f"), "Name" : 'Karthik Reddy K ', "STATE" : "ANDHRA" })
+
+24)MongoDB's remove() method is used to remove document from the collection. remove() method accepts two parameters.
+One is deletion criteria and second is justOne flag )
+
+db.users.remove({"Name":"Ranjith"}) --To delete single document ( If Field name is unique it will work)
+
+db.users.remove( { "City":"Tirupati" } )  --To delete multiple  document
+db.users.remove( { "City":"Tirupati" } , 1 )  --To delete single document ( If structure is different this operation will not work)
+db.users.remove() -- It will all the documents on particular collection.
+
+
+25)To check no of documents in a collection
+
+db.users.count()
+
+26)To get the count who's age is greater than or less than , use below queries
+
+db.users.count({ "Age" : {$gt:26}})
+
+db.users.count({ "Age" : {$gt:25}})
+
+db.users.count({ "Age" : {$lt:25}})
+
+db.users.count({ "Age" : {$lt:35}})
+
+27)In a MongoDB shell, the db.stats() command shows you the amount of space occupied by the selected database.
+
+28)To see the collection size, use below command
+
+db.collectionname.dataSize()
+
+29)for secure authentication edit mongo.config and add following and save
+security:
+  authorization: enabled
+
+30) To create a user and giving priviliges
+
+db.createUser({user:"user1",pwd:"123",roles:[{role:"read",db:"karthik"},{role:"userAdmin",db:"karthik"}]})
+
+imp note: while connecting to db dont provide --authenticationDatabase "DBNAME" 
+
+31)authentication to specific DB
+
+mongo -u "kkr" -p --authenticationDatabase "karthik"
+
+note: By default it will connect to test DB and we need to type specific DB name, then only we can able to see collection.
+
+db.createUser( { user: "root", pwd: "bR2yameBuprah7", roles: [ { role: "root", db: "admin" } ] });
+
+db.createUser({user:"developers",pwd:"gajeY5F",roles:["readWrite","dbAdmin"]});
+
+32) [sreenivas@KVM09 ~]$ mongodump --db dialers_apidb --username root --password tuduwufUp7udruVu --authenticationDatabase admin
+
+33) mongorestore ( While using below command we need to create a user with read,write,restore privilige)
+
+mongorestore -u restore -p gajeY5F --authenticationDatabase admin --db dialers_apidb_dev /home/sreenivas/dump/dialers_apidb/
+
+[sreenivas@KVM09 ~]$ mongorestore -u root -p tuduwufUp7udruVu --authenticationDatabase admin --db dialerboardapi /home/sreenivas/dump/dialerboardapi/
+
+mongodump --db dialers_apidb --username root --password bR2yameBuprah7 --authenticationDatabase admin
+
+24.O7 .20t7 to 05.08.2017
+
+
+> show dbs
+
+> db.getUsers()
+
+> db.createUser( { user: "root", pwd: "bR2yameBuprah7", roles: [ { role: "root", db: "admin" } ] });
+
+> db.createUser( { user: "channeldpn", pwd: "bR2yameB7", roles: [ { role: "readWrite", db: "ChannelDPush" }, { role: "dbAdmin", db: "ChannelDPush" } , { role: "userAdmin", db: "ChannelDPush" } ] });
+
+> db.grantRolesToUser( "developers", [ "userAdmin" , { role : "userAdmin", db : "StgChannelDPush" } ] )
+
+> db.revokeRolesFromUser( "developers", [ { role: "userAdmin", db: "StgChannelDPush" }, "userAdmin" ] )
+
+mongoimport -u "root" --authenticationDatabase "admin"   --db RoutingRedirection --collection Teleboss_Ratesheet_Status --type csv --fields RatesheetID.string\(\),Active.string\(\) --columnsHaveTypes --file /tmp/170829_server_ratesheet_map.csv
+
+[sreenivas@db-testing ~]$ mongorestore --nsInclude 'sreenivas.*' --nsFrom 'sreenivas.openarka' --nsTo 'sreenivas.akranepo'  --username root --password astrix@123 --authenticationDatabase admin ./dump/
+[sreenivas@db-testing ~]$ mongodump --db sreenivas --username root --password astrix@123 --authenticationDatabase admin
+[sreenivas@db-testing ~]$ mongorestore -u root -p astrix@123 --authenticationDatabase admin --db test1 ./dump/sreenivas/
+
+[sreenivas@db-testing ~]$ mongorestore --nsInclude 'sreenivas.sales_customer*'  --username root --password astrix@123 --authenticationDatabase admin ./dump/
+
+[sreenivas@db-testing ~]$ mongorestore --nsInclude 'sreenivas.*' --nsExclude 'sreenivas.users_*' --username root --password astrix@123 --authenticationDatabase admin ./dump/
+
+[sreenivas@db-testing ~]$ mongorestore --nsInclude 'sreenivas.*' --nsFrom 'sreenivas.$sales$_$customer$' --nsTo 'sreenivas.$customer$_$sales$' -u "root" -p"astrix@123" --authenticationDatabase "admin" /home/sreenivas/dump/
+
+[sreenivas@db-testing ~]$ mongorestore --nsInclude 'sreenivas.*' --nsFrom 'sreenivas.openarka' --nsTo 'sreenivas.arkaopen' -u "root" -p"astrix@123" --authenticationDatabase "admin" /home/sreenivas/dump/
+
+[sreenivas@db-testing ~]$ mongoimport -u "root" -p --authenticationDatabase "admin"  --db RoutingRedirection --collection Teleboss_Ratesheet_Rate_1 --type csv --headerline --file /home/sreenivas/170828_ngt_rates_1.csv
+
+[sreenivas@kvm12 ~]$ mongodump --collection Teleboss_Ratesheet_Status --db RoutingRedirection --username root --password thafra8W --authenticationDatabase admin
+
+C:\Program Files\MongoDB\Server\3.2\bin>mongodump --db ApplePush --username admin --password adminadvaitam --authenticationDatabase ApplePush --out D:\DB_backup\
+mongorestore -u root -p bR2yameBuprah7 --authenticationDatabase admin --db ApplePush ./ApplePush
+
+> db.users.find({}, {_id:0})
+------
+[root@db-testing ~]# mongoimport --db RoutingRedirection --collection Teleboss_Ratesheet_Rate_1 --type csv --headerline --file /home/sreenivas/170828_ngt_rates_1.csv
+db.updateUser( "appClient01", { customData : { employeeId : "0x3039" },
+                 roles : [
+                           { role : "read", db : "assets"  }
+                         ]
+                }
+             )
